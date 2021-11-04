@@ -30,7 +30,7 @@ def readExcelSheet():  #reads excel sheet and store links and create filenames a
     data_frame = panda.read_excel(file_loc, index_col= None,na_values=['NA'], usecols = "A:D")
 
     list_of_weblinks = data_frame['Audio/Video link'].tolist()
-    print(list_of_weblinks)
+    
 
 
     '''read Date, Time and Station Column fron Excel Sheet and creates filename with Date-Time-Station Format''' 
@@ -43,10 +43,11 @@ def readExcelSheet():  #reads excel sheet and store links and create filenames a
     for name in list_of_folderTemp:
         new_name = name.replace(":","_")
         list_of_folderNames.append(new_name) 
-    print(list_of_folderNames)
+ 
 
     name_link_tuple_list = list(zip(list_of_folderNames,list_of_weblinks))
-    print(name_link_tuple_list)
+
+    
     return name_link_tuple_list
           
    
@@ -85,7 +86,7 @@ def geDataUrl(): #fetched the data url from the player on the webpage to acces t
 
         if searchLine in line:
             url_end = re.findall(r'"([^"]*)"',line)
-            print(url_end)
+            #print(url_end)
             break
 
     search.close()
@@ -155,7 +156,7 @@ def download_video(video_links, download_file_path): #fetch video from links fou
 ''' ----This is the main code area where all code is run (like main in C)----'''
 name_link_tuple=readExcelSheet()
 download_path= setDowloadpath()
-print(download_path)
+#print(download_path)
 
 for (name, link) in name_link_tuple: 
     createDir(name, download_path)
