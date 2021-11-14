@@ -1,4 +1,5 @@
 import os
+import datetime
 import urllib
 import urllib.request
 import re
@@ -58,21 +59,35 @@ def createDir(file):
     return path
 
 def getTranscript(): #extract text data from webpage and writes in to a text file
+
+    strips = []
+    span_idList = []
+    timeList = []
     html = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(html, "html.parser")
     soupTempfile = open(r"soupTemp.txt", "w+")
     soupTempfile.writelines(soup.prettify())
     soupTempfile.close()
-    for script in soup(["script", "style"]):
-
-        script.extract()
-
-    strips = list(soup.stripped_strings)
-
     
+    for span in soup.findAll(lambda tag: tag.name == 'span'):
+        if span['id'].isdigit():
+            span_idList.append(int(span['id']))
+        else:
+            '''do nothing'''
+
+        strips.append(span.text)
+    print(span_idList)
+    for time in span_idList:
+        minutes = datetime.timedelta(seconds=time)
+        timeList.append(minutes)
     transcript_path = download_path + "Transcript.txt"
     with open(transcript_path, "w+") as file:
      for item in strips:
+         file.write("%s\n" % item)
+    timestamp_path =  download_path + "TimeStamp.txt"
+    with open(timestamp_path, "w+") as file:
+        file.write("%s\n" % soup.find(lambda tag: tag.name == 'span')['id'])
+        for item in timeList:
          file.write("%s\n" % item)
 
 def geDataUrl(): #fetched the data url from the player on the webpage to acces to source of the audio/video
@@ -149,12 +164,12 @@ def download_video(video_links): #fetch video from links found on page
 
 
 ''' ----This is the main code area where all code is run (like main in C)----'''
-readExcelLinks()
-file_names = readExcel_createFileNames()
-for name in file_names:
-    createDir(name)
+##readExcelLinks()
+##file_names = readExcel_createFileNames()
+##for name in file_names:
+##    createDir(name)
     
-##getTranscript()
+getTranscript()
 ##geDataUrl()
 ##mp4_dowloadUrl = getMp4Url()
 ##download_video(mp4_dowloadUrl)
